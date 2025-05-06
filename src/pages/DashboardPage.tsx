@@ -11,7 +11,9 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer 
+  ResponsiveContainer,
+  LineChart,
+  Line
 } from 'recharts';
 import {
   Table,
@@ -21,7 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { PlusCircle, Play, Pause, LineChart, ChevronRight } from 'lucide-react';
+import { PlusCircle, Play, Pause, LineChart as LineChartIcon, ChevronRight } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 export default function DashboardPage() {
   const [algorithms, setAlgorithms] = useState<Algorithm[]>([]);
@@ -73,10 +76,13 @@ export default function DashboardPage() {
     <div className="container py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Button onClick={() => navigate('/')}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          New Algorithm
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button onClick={() => navigate('/')}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            New Algorithm
+          </Button>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -170,11 +176,11 @@ export default function DashboardPage() {
                     <TableCell className="font-medium">{algorithm.name}</TableCell>
                     <TableCell>
                       {algorithm.is_active ? (
-                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
                           Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200">
                           Inactive
                         </span>
                       )}
@@ -184,7 +190,7 @@ export default function DashboardPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <LineChart className="mr-2 h-4 w-4 text-green-500" />
+                        <LineChartIcon className="mr-2 h-4 w-4 text-green-500" />
                         <span className="text-green-500">+3.2%</span>
                       </div>
                     </TableCell>
