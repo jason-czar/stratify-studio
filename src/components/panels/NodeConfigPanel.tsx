@@ -1,15 +1,15 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import StockSelectionConfig from './StockSelectionConfig';
 import ConditionConfig from './ConditionConfig';
 import OrderExecutionConfig from './OrderExecutionConfig';
+import { NodeData } from '@/types/nodes';
 
 interface NodeConfigPanelProps {
   nodeId: string | null;
   nodeType: string | null;
-  data: any;
-  onUpdateNodeData: (nodeId: string, data: any) => void;
+  data: NodeData;
+  onUpdateNodeData: (nodeId: string, data: Partial<NodeData>) => void;
 }
 
 const NodeConfigPanel: React.FC<NodeConfigPanelProps> = ({ 

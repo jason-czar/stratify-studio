@@ -1,12 +1,10 @@
 
 import React from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeProps } from 'reactflow';
 import { Search } from 'lucide-react';
 import { StockSelectionData } from '../../types/nodes';
 
-const StockSelectionNode = ({ data, isConnectable }) => {
-  const nodeData: StockSelectionData = data;
-  
+const StockSelectionNode: React.FC<NodeProps<StockSelectionData>> = ({ data, isConnectable }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm min-w-[200px]">
       <div className="flex items-center mb-2">
@@ -14,19 +12,19 @@ const StockSelectionNode = ({ data, isConnectable }) => {
           <Search className="h-4 w-4 text-blue-600" />
         </div>
         <div>
-          <div className="font-medium">{nodeData.label || 'Select Stock'}</div>
+          <div className="font-medium">{data.label || 'Select Stock'}</div>
         </div>
       </div>
       
-      {nodeData.ticker && (
+      {data.ticker && (
         <div className="bg-gray-50 p-2 rounded text-sm mb-2">
-          <span className="font-semibold">Ticker:</span> {nodeData.ticker}
-          {nodeData.exchange && <span className="ml-1 text-gray-500">({nodeData.exchange})</span>}
+          <span className="font-semibold">Ticker:</span> {data.ticker}
+          {data.exchange && <span className="ml-1 text-gray-500">({data.exchange})</span>}
         </div>
       )}
       
-      {nodeData.description && (
-        <div className="text-xs text-gray-500 mt-1">{nodeData.description}</div>
+      {data.description && (
+        <div className="text-xs text-gray-500 mt-1">{data.description}</div>
       )}
 
       <Handle

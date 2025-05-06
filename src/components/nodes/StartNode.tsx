@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeProps } from 'reactflow';
 import { Play } from 'lucide-react';
+import { StartNodeData } from '../../types/nodes';
 
-const StartNode = ({ data, isConnectable }) => {
+const StartNode: React.FC<NodeProps<StartNodeData>> = ({ data, isConnectable }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm min-w-[180px]">
       <div className="flex items-center">

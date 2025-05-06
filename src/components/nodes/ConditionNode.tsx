@@ -1,20 +1,18 @@
 
 import React from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeProps } from 'reactflow';
 import { Filter } from 'lucide-react';
 import { ConditionData } from '../../types/nodes';
 
-const ConditionNode = ({ data, isConnectable }) => {
-  const nodeData: ConditionData = data;
-  
+const ConditionNode: React.FC<NodeProps<ConditionData>> = ({ data, isConnectable }) => {
   const getConditionLabel = () => {
-    if (nodeData.conditionType && nodeData.operator && nodeData.value !== undefined) {
-      if (nodeData.conditionType === 'technical' && nodeData.indicator) {
-        return `${nodeData.indicator} ${nodeData.operator} ${nodeData.value}`;
-      } else if (nodeData.conditionType === 'price') {
-        return `Price ${nodeData.operator} $${nodeData.value}`;
-      } else if (nodeData.conditionType === 'time' && nodeData.timeframe) {
-        return `Time: ${nodeData.timeframe}`;
+    if (data.conditionType && data.operator && data.value !== undefined) {
+      if (data.conditionType === 'technical' && data.indicator) {
+        return `${data.indicator} ${data.operator} ${data.value}`;
+      } else if (data.conditionType === 'price') {
+        return `Price ${data.operator} $${data.value}`;
+      } else if (data.conditionType === 'time' && data.timeframe) {
+        return `Time: ${data.timeframe}`;
       }
     }
     return 'No condition set';
@@ -27,7 +25,7 @@ const ConditionNode = ({ data, isConnectable }) => {
           <Filter className="h-4 w-4 text-purple-600" />
         </div>
         <div>
-          <div className="font-medium">{nodeData.label || 'Condition'}</div>
+          <div className="font-medium">{data.label || 'Condition'}</div>
         </div>
       </div>
       
@@ -35,8 +33,8 @@ const ConditionNode = ({ data, isConnectable }) => {
         {getConditionLabel()}
       </div>
       
-      {nodeData.description && (
-        <div className="text-xs text-gray-500 mt-1">{nodeData.description}</div>
+      {data.description && (
+        <div className="text-xs text-gray-500 mt-1">{data.description}</div>
       )}
 
       <Handle

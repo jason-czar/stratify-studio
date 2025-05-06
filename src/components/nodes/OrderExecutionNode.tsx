@@ -1,21 +1,19 @@
 
 import React from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, NodeProps } from 'reactflow';
 import { DollarSign } from 'lucide-react';
 import { OrderExecutionData } from '../../types/nodes';
 
-const OrderExecutionNode = ({ data, isConnectable }) => {
-  const nodeData: OrderExecutionData = data;
-  
+const OrderExecutionNode: React.FC<NodeProps<OrderExecutionData>> = ({ data, isConnectable }) => {
   const getOrderSummary = () => {
-    if (nodeData.side && nodeData.orderType) {
-      const quantityText = nodeData.quantity === 'all' 
+    if (data.side && data.orderType) {
+      const quantityText = data.quantity === 'all' 
         ? 'All available' 
-        : nodeData.quantity ? `${nodeData.quantity} shares` : '';
+        : data.quantity ? `${data.quantity} shares` : '';
       
-      const priceText = nodeData.price ? `@ $${nodeData.price}` : '';
+      const priceText = data.price ? `@ $${data.price}` : '';
       
-      return `${nodeData.side.toUpperCase()} ${nodeData.orderType} ${quantityText} ${priceText}`;
+      return `${data.side.toUpperCase()} ${data.orderType} ${quantityText} ${priceText}`;
     }
     return 'Order not configured';
   };
@@ -27,25 +25,25 @@ const OrderExecutionNode = ({ data, isConnectable }) => {
           <DollarSign className="h-4 w-4 text-green-600" />
         </div>
         <div>
-          <div className="font-medium">{nodeData.label || 'Execute Order'}</div>
+          <div className="font-medium">{data.label || 'Execute Order'}</div>
         </div>
       </div>
       
       <div className={`p-2 rounded text-sm mb-2 ${
-        nodeData.side === 'buy' ? 'bg-green-50 text-green-800' : 
-        nodeData.side === 'sell' ? 'bg-red-50 text-red-800' : 'bg-gray-50'
+        data.side === 'buy' ? 'bg-green-50 text-green-800' : 
+        data.side === 'sell' ? 'bg-red-50 text-red-800' : 'bg-gray-50'
       }`}>
         {getOrderSummary()}
       </div>
       
-      {nodeData.timeInForce && (
+      {data.timeInForce && (
         <div className="text-xs bg-gray-50 p-1 rounded inline-block">
-          TIF: {nodeData.timeInForce.toUpperCase()}
+          TIF: {data.timeInForce.toUpperCase()}
         </div>
       )}
       
-      {nodeData.description && (
-        <div className="text-xs text-gray-500 mt-1">{nodeData.description}</div>
+      {data.description && (
+        <div className="text-xs text-gray-500 mt-1">{data.description}</div>
       )}
 
       <Handle

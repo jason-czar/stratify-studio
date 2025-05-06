@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import ReactFlow, { 
   Background, 
@@ -7,7 +6,9 @@ import ReactFlow, {
   useNodesState, 
   useEdgesState, 
   addEdge,
-  Panel
+  Panel,
+  Node,
+  Edge
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { nodeTypes } from '../components/nodes/nodeTypes';
@@ -15,8 +16,9 @@ import NodeConfigPanel from '../components/panels/NodeConfigPanel';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { NodeData } from '@/types/nodes';
 
-const initialNodes = [
+const initialNodes: Node<NodeData>[] = [
   {
     id: 'start-1',
     type: 'start',
@@ -59,7 +61,7 @@ const initialNodes = [
   },
 ];
 
-const initialEdges = [
+const initialEdges: Edge[] = [
   { id: 'e-start-1-stock-1', source: 'start-1', target: 'stock-1', sourceHandle: 'out', targetHandle: 'in' },
   { id: 'e-stock-1-condition-1', source: 'stock-1', target: 'condition-1', sourceHandle: 'out', targetHandle: 'in' },
   { id: 'e-condition-1-order-1', source: 'condition-1', target: 'order-1', sourceHandle: 'outTrue', targetHandle: 'in' },
@@ -68,7 +70,7 @@ const initialEdges = [
 const Index = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNode, setSelectedNode] = useState<Node<NodeData> | null>(null);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),

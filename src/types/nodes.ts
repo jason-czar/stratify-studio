@@ -26,3 +26,13 @@ export interface OrderExecutionData extends BaseNodeData {
   price?: number;
   timeInForce?: 'day' | 'gtc' | 'ioc' | 'fok';
 }
+
+// Add the node data types
+export interface StartNodeData extends BaseNodeData {}
+
+// Union type for all node data
+export type NodeData = 
+  | StartNodeData
+  | StockSelectionData
+  | ConditionData
+  | OrderExecutionData;
