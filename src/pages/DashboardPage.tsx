@@ -30,11 +30,11 @@ export default function DashboardPage() {
   
   // Mock performance data for dashboard
   const performanceData = [
-    { name: 'Mon', value: 420 },
-    { name: 'Tue', value: -180 },
-    { name: 'Wed', value: 300 },
-    { name: 'Thu', value: 508 },
-    { name: 'Fri', value: 250 },
+    { name: 'Mon', value: 420, fill: '#4ade80' },
+    { name: 'Tue', value: -180, fill: '#f87171' },
+    { name: 'Wed', value: 300, fill: '#4ade80' },
+    { name: 'Thu', value: 508, fill: '#4ade80' },
+    { name: 'Fri', value: 250, fill: '#4ade80' },
   ];
   
   useEffect(() => {
@@ -129,8 +129,10 @@ export default function DashboardPage() {
                 />
                 <Bar 
                   dataKey="value" 
-                  fill={(data) => (data.value >= 0 ? "#4ade80" : "#f87171") as string}
+                  fill="#4ade80"
+                  fillOpacity={0.8}
                   radius={[4, 4, 0, 0]}
+                  isAnimationActive={false}
                 />
               </BarChart>
             </ResponsiveContainer>
