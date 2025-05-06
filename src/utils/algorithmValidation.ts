@@ -1,6 +1,6 @@
 
 import { Node, Edge } from 'reactflow';
-import { NodeData } from '@/types/nodes';
+import { NodeData, StockSelectionData, ConditionData, OrderExecutionData } from '@/types/nodes';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -65,24 +65,30 @@ export const validateAlgorithm = (nodes: Node<NodeData>[], edges: Edge[]): Valid
     checkCycle(startNode.id, new Set<string>());
   }
 
-  // Check for incomplete node configuration
+  // Check for incomplete node configuration based on node type
   nodes.forEach(node => {
     switch (node.type) {
-      case 'stockSelection':
-        if (!node.data.ticker) {
+      case 'stockSelection': {
+        const stockData = node.data as StockSelectionData;
+        if (!stockData.ticker) {
           result.warnings.push(`Stock Selection node "${node.data.label || node.id}" has no ticker specified`);
         }
         break;
-      case 'condition':
-        if (!node.data.conditionType || !node.data.operator || node.data.value === undefined) {
+      }
+      case 'condition': {
+        const conditionData = node.data as ConditionData;
+        if (!conditionData.conditionType || !conditionData.operator || conditionData.value === undefined) {
           result.warnings.push(`Condition node "${node.data.label || node.id}" is not fully configured`);
         }
         break;
-      case 'orderExecution':
-        if (!node.data.orderType || !node.data.side || node.data.quantity === undefined) {
+      }
+      case 'orderExecution': {
+        const orderData = node.data as OrderExecutionData;
+        if (!orderData.orderType || !orderData.side || orderData.quantity === undefined) {
           result.warnings.push(`Order Execution node "${node.data.label || node.id}" is not fully configured`);
         }
         break;
+      }
     }
   });
 
