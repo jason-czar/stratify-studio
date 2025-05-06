@@ -1,7 +1,6 @@
-
 import { Node, Edge } from 'reactflow';
 import { NodeData, StockSelectionData, ConditionData, OrderExecutionData } from '@/types/nodes';
-import { useConditionEvaluation } from '@/hooks/useConditionEvaluation';
+import { evaluateCondition } from '@/hooks/useConditionEvaluation';
 
 export interface HistoricalDataPoint {
   date: Date;
@@ -86,7 +85,6 @@ export class BacktestService {
   private edges: Edge[];
   private params: BacktestParams;
   private historicalData: Record<string, HistoricalDataPoint[]> = {};
-  private { evaluateCondition } = useConditionEvaluation();
 
   constructor(nodes: Node<NodeData>[], edges: Edge[], params: BacktestParams) {
     this.nodes = nodes;
@@ -215,8 +213,8 @@ export class BacktestService {
             for (const node of currentNodes) {
               switch (node.type) {
                 case 'condition': {
-                  // Evaluate condition
-                  const conditionResult = this.evaluateCondition(
+                  // Evaluate condition using the imported function
+                  const conditionResult = evaluateCondition(
                     node.data as ConditionData, 
                     marketData
                   );
