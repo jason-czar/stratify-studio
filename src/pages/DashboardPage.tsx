@@ -129,7 +129,7 @@ export default function DashboardPage() {
                 />
                 <Bar 
                   dataKey="value" 
-                  fill={(data) => data.value >= 0 ? "#4ade80" : "#f87171"}
+                  fill={(data) => (data.value >= 0 ? "#4ade80" : "#f87171") as string}
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>

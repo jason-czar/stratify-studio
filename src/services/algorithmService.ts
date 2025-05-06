@@ -2,6 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Node, Edge } from "reactflow";
 import { NodeData } from "@/types/nodes";
+import { Json } from "@/integrations/supabase/types";
 
 export interface Algorithm {
   id: string;
@@ -26,6 +27,23 @@ export interface AlgorithmPerformance {
   created_at: string;
 }
 
+// Helper function to convert database types to our interface types
+const convertDbToAlgorithm = (data: any): Algorithm => {
+  return {
+    ...data,
+    nodes: Array.isArray(data.nodes) ? data.nodes : JSON.parse(data.nodes as string),
+    edges: Array.isArray(data.edges) ? data.edges : JSON.parse(data.edges as string),
+  };
+};
+
+// Helper function to convert database types to performance interface
+const convertDbToPerformance = (data: any): AlgorithmPerformance => {
+  return {
+    ...data,
+    metrics: data.metrics ? (typeof data.metrics === 'string' ? JSON.parse(data.metrics) : data.metrics) : null,
+  };
+};
+
 export const AlgorithmService = {
   /**
    * Save an algorithm
@@ -43,20 +61,21 @@ export const AlgorithmService = {
         throw new Error("User not authenticated");
       }
 
+      // Convert nodes and edges to JSON string if needed
       const { data, error } = await supabase
         .from('algorithms')
         .insert({
           user_id: user.user.id,
           name,
           description,
-          nodes,
-          edges,
+          nodes: nodes as unknown as Json,
+          edges: edges as unknown as Json,
         })
         .select()
         .single();
       
       if (error) throw error;
-      return data;
+      return convertDbToAlgorithm(data);
     } catch (error) {
       console.error('Error saving algorithm:', error);
       throw error;
@@ -81,7 +100,7 @@ export const AlgorithmService = {
         .order('updated_at', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      return (data || []).map(convertDbToAlgorithm);
     } catch (error) {
       console.error('Error getting user algorithms:', error);
       return [];
@@ -100,7 +119,7 @@ export const AlgorithmService = {
         .single();
       
       if (error) throw error;
-      return data;
+      return data ? convertDbToAlgorithm(data) : null;
     } catch (error) {
       console.error('Error getting algorithm:', error);
       return null;
@@ -115,18 +134,30 @@ export const AlgorithmService = {
     updates: Partial<Omit<Algorithm, 'id' | 'user_id' | 'created_at'>>
   ): Promise<Algorithm | null> {
     try {
+      // Convert any nodes and edges to the format expected by the database
+      const dbUpdates: any = {
+        ...updates,
+        updated_at: new Date().toISOString(),
+      };
+      
+      // Only convert if present
+      if (updates.nodes) {
+        dbUpdates.nodes = updates.nodes as unknown as Json;
+      }
+      
+      if (updates.edges) {
+        dbUpdates.edges = updates.edges as unknown as Json;
+      }
+
       const { data, error } = await supabase
         .from('algorithms')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .update(dbUpdates)
         .eq('id', id)
         .select()
         .single();
       
       if (error) throw error;
-      return data;
+      return data ? convertDbToAlgorithm(data) : null;
     } catch (error) {
       console.error('Error updating algorithm:', error);
       return null;
@@ -167,7 +198,7 @@ export const AlgorithmService = {
         .single();
       
       if (error) throw error;
-      return data;
+      return data ? convertDbToAlgorithm(data) : null;
     } catch (error) {
       console.error('Error toggling algorithm active status:', error);
       return null;
@@ -186,7 +217,7 @@ export const AlgorithmService = {
         .order('date', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      return (data || []).map(convertDbToPerformance);
     } catch (error) {
       console.error('Error getting algorithm performance:', error);
       return [];
@@ -211,13 +242,13 @@ export const AlgorithmService = {
           profit_loss: profitLoss,
           trades_count: tradesCount,
           win_rate: winRate,
-          metrics,
+          metrics: metrics as unknown as Json,
         })
         .select()
         .single();
       
       if (error) throw error;
-      return data;
+      return data ? convertDbToPerformance(data) : null;
     } catch (error) {
       console.error('Error adding performance metric:', error);
       return null;
