@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,7 +39,7 @@ export function APIKeyManager() {
         .from('api_keys')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as { data: APIKey[] | null, error: any };
       
       if (error) throw error;
       setApiKeys(data || []);
@@ -95,7 +94,7 @@ export function APIKeyManager() {
         .from('api_keys')
         .delete()
         .eq('id', keyId)
-        .eq('user_id', user?.id);
+        .eq('user_id', user?.id) as { error: any };
       
       if (error) throw error;
       

@@ -122,6 +122,39 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_preview: string
+          last_used: string | null
+          name: string
+          permissions: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_preview: string
+          last_used?: string | null
+          name: string
+          permissions?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_preview?: string
+          last_used?: string | null
+          name?: string
+          permissions?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -146,6 +179,30 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          has_completed_onboarding: boolean | null
+          id: string
+          theme: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          has_completed_onboarding?: boolean | null
+          id?: string
+          theme?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          has_completed_onboarding?: boolean | null
+          id?: string
+          theme?: string | null
+          user_id?: string
         }
         Relationships: []
       }

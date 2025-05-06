@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +20,14 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { Rocket, Shield, Code, CheckCircle } from 'lucide-react';
 
+interface UserPreference {
+  id: string;
+  user_id: string;
+  has_completed_onboarding: boolean;
+  theme: string;
+  created_at: string;
+}
+
 export function WelcomeDialog() {
   const [open, setOpen] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState('welcome');
@@ -38,7 +45,7 @@ export function WelcomeDialog() {
           .from('user_preferences')
           .select('has_completed_onboarding')
           .eq('user_id', user.id)
-          .single();
+          .single() as { data: UserPreference | null, error: any };
         
         if (error) {
           // If no record exists, create one and show onboarding
@@ -74,7 +81,7 @@ export function WelcomeDialog() {
           has_completed_onboarding: true,
           theme: 'system',
           created_at: new Date().toISOString() 
-        });
+        }) as { error: any };
       
       if (error) throw error;
       
