@@ -11,6 +11,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import AlgorithmDetailPage from "./pages/AlgorithmDetailPage";
 import DeploymentPage from "./pages/DeploymentPage";
+import SecurityPage from "./pages/SecurityPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
@@ -38,6 +39,7 @@ const App = () => {
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/algorithms/:id" element={<AlgorithmDetailPage />} />
                     <Route path="/deployment" element={<DeploymentPage />} />
+                    <Route path="/security" element={<SecurityPage />} />
                   </Route>
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

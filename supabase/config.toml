@@ -3,3 +3,9 @@ project_id = "gkjvcyfzdqifiaiumkvr"
 
 [functions.alpaca]
 verify_jwt = true
+
+[functions.generate-api-key]
+verify_jwt = true
+
+[functions.encrypt-data]
+verify_jwt = true
