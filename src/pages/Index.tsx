@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import ReactFlow, { 
   Background, 
@@ -19,6 +20,7 @@ import { Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { NodeData, StartNodeData } from '@/types/nodes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AlpacaConnectionStatus from '@/components/AlpacaConnectionStatus';
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -145,25 +147,30 @@ const Index = () => {
           </div>
           
           <div>
-            <Tabs defaultValue="config">
-              <TabsList className="grid grid-cols-2 mb-4">
-                <TabsTrigger value="config">Configure</TabsTrigger>
-                <TabsTrigger value="backtest">Backtest</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="config">
-                <NodeConfigPanel 
-                  nodeId={selectedNode?.id || null}
-                  nodeType={selectedNode?.type || null}
-                  data={selectedNode?.data || defaultEmptyData}
-                  onUpdateNodeData={updateNodeData}
-                />
-              </TabsContent>
-              
-              <TabsContent value="backtest">
-                <BacktestPanel nodes={nodes} edges={edges} />
-              </TabsContent>
-            </Tabs>
+            {/* Add Alpaca connection status card */}
+            <AlpacaConnectionStatus />
+            
+            <div className="mt-4">
+              <Tabs defaultValue="config">
+                <TabsList className="grid grid-cols-2 mb-4">
+                  <TabsTrigger value="config">Configure</TabsTrigger>
+                  <TabsTrigger value="backtest">Backtest</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="config">
+                  <NodeConfigPanel 
+                    nodeId={selectedNode?.id || null}
+                    nodeType={selectedNode?.type || null}
+                    data={selectedNode?.data || defaultEmptyData}
+                    onUpdateNodeData={updateNodeData}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="backtest">
+                  <BacktestPanel nodes={nodes} edges={edges} />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
