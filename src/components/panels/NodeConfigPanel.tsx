@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import StockSelectionConfig from './StockSelectionConfig';
@@ -34,12 +35,9 @@ const NodeConfigPanel: React.FC<NodeConfigPanelProps> = ({
     );
   }
 
-  const handleDataChange = (newData: any) => {
+  const handleDataChange = (newData: Partial<NodeData>) => {
     if (nodeId) {
-      onUpdateNodeData(nodeId, {
-        ...data,
-        ...newData
-      });
+      onUpdateNodeData(nodeId, newData);
     }
   };
 

@@ -16,13 +16,13 @@ import NodeConfigPanel from '../components/panels/NodeConfigPanel';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { NodeData } from '@/types/nodes';
+import { NodeData, StartNodeData } from '@/types/nodes';
 
 const initialNodes: Node<NodeData>[] = [
   {
     id: 'start-1',
     type: 'start',
-    data: { label: 'Start' },
+    data: { label: 'Start' } as StartNodeData,
     position: { x: 250, y: 25 },
   },
   {
@@ -98,6 +98,9 @@ const Index = () => {
     );
   }, [setNodes]);
 
+  // Create a default empty data object that conforms to NodeData type
+  const defaultEmptyData: StartNodeData = { label: '' };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-4">
@@ -143,7 +146,7 @@ const Index = () => {
             <NodeConfigPanel 
               nodeId={selectedNode?.id || null}
               nodeType={selectedNode?.type || null}
-              data={selectedNode?.data || {}}
+              data={selectedNode?.data || defaultEmptyData}
               onUpdateNodeData={updateNodeData}
             />
           </div>
