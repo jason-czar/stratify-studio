@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          active: boolean | null
+          condition: string
+          created_at: string
+          id: string
+          name: string
+          notification_method: string
+          ticker: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          active?: boolean | null
+          condition: string
+          created_at?: string
+          id?: string
+          name: string
+          notification_method: string
+          ticker: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          active?: boolean | null
+          condition?: string
+          created_at?: string
+          id?: string
+          name?: string
+          notification_method?: string
+          ticker?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       algorithm_performance: {
         Row: {
           algorithm_id: string

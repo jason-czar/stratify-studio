@@ -53,7 +53,7 @@ export function AlertManager() {
         .from('alerts')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as { data: Alert[] | null, error: any };
       
       if (error) throw error;
       setAlerts(data || []);
@@ -101,7 +101,7 @@ export function AlertManager() {
           })
           .eq('id', editingAlertId)
           .eq('user_id', user.id)
-          .select();
+          .select() as { data: Alert[] | null, error: any };
       } else {
         // Create new alert
         result = await supabase
@@ -115,7 +115,7 @@ export function AlertManager() {
             active: formData.active,
             notification_method: formData.notification_method,
           })
-          .select();
+          .select() as { data: Alert[] | null, error: any };
       }
       
       const { data, error } = result;
@@ -153,7 +153,7 @@ export function AlertManager() {
         .from('alerts')
         .update({ active: !currentActive })
         .eq('id', id)
-        .eq('user_id', user?.id);
+        .eq('user_id', user?.id) as { error: any };
       
       if (error) throw error;
       
@@ -193,7 +193,7 @@ export function AlertManager() {
         .from('alerts')
         .delete()
         .eq('id', id)
-        .eq('user_id', user?.id);
+        .eq('user_id', user?.id) as { error: any };
       
       if (error) throw error;
       
