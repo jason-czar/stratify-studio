@@ -9,7 +9,110 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      algorithm_performance: {
+        Row: {
+          algorithm_id: string
+          created_at: string
+          date: string
+          id: string
+          metrics: Json | null
+          profit_loss: number | null
+          trades_count: number | null
+          win_rate: number | null
+        }
+        Insert: {
+          algorithm_id: string
+          created_at?: string
+          date?: string
+          id?: string
+          metrics?: Json | null
+          profit_loss?: number | null
+          trades_count?: number | null
+          win_rate?: number | null
+        }
+        Update: {
+          algorithm_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          metrics?: Json | null
+          profit_loss?: number | null
+          trades_count?: number | null
+          win_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "algorithm_performance_algorithm_id_fkey"
+            columns: ["algorithm_id"]
+            isOneToOne: false
+            referencedRelation: "algorithms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      algorithms: {
+        Row: {
+          created_at: string
+          description: string | null
+          edges: Json
+          id: string
+          is_active: boolean | null
+          name: string
+          nodes: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          edges: Json
+          id?: string
+          is_active?: boolean | null
+          name: string
+          nodes: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          nodes?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

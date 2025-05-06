@@ -21,6 +21,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NodeData, StartNodeData } from '@/types/nodes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AlpacaConnectionStatus from '@/components/AlpacaConnectionStatus';
+import { useAuth } from '@/contexts/AuthContext';
+import { SaveAlgorithmDialog } from '@/components/SaveAlgorithmDialog';
+import { ProfileDropdown } from '@/components/ProfileDropdown';
+import { useNavigate } from 'react-router-dom';
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -75,6 +79,8 @@ const Index = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<NodeData> | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -102,13 +108,28 @@ const Index = () => {
     );
   }, [setNodes]);
 
+  const handleSaveSuccess = () => {
+    navigate('/dashboard');
+  };
+
   // Create a default empty data object that conforms to NodeData type
   const defaultEmptyData: StartNodeData = { label: '' };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-4">
-        <h1 className="text-3xl font-bold mb-6 text-center">Alpaca Trading Algorithm Builder</h1>
+        <header className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Alpaca Trading Algorithm Builder</h1>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/dashboard')}
+            >
+              Dashboard
+            </Button>
+            <ProfileDropdown />
+          </div>
+        </header>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
@@ -139,8 +160,21 @@ const Index = () => {
               </CardContent>
             </Card>
             
-            <div className="flex justify-center">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4">
+            <div className="flex justify-center space-x-4">
+              <SaveAlgorithmDialog 
+                nodes={nodes}
+                edges={edges}
+                onSaveSuccess={handleSaveSuccess}
+              />
+              
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4"
+                onClick={() => {
+                  // This would trigger deployment to Alpaca
+                  // For now, just navigate to dashboard
+                  navigate('/dashboard');
+                }}
+              >
                 Deploy to Alpaca
               </Button>
             </div>
