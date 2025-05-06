@@ -112,8 +112,19 @@ async function getPositions(req: Request) {
  */
 async function getOrders(req: Request) {
   try {
-    const url = new URL(req.url);
-    const status = url.searchParams.get('status') || '';
+    // Updated: Get status from body instead of query parameters
+    let status = '';
+    
+    // Parse request body if it exists
+    try {
+      if (req.body) {
+        const body = await req.json();
+        status = body?.status || '';
+      }
+    } catch (e) {
+      // If parsing body fails, proceed with no status filter
+      console.log("No body provided or failed to parse");
+    }
     
     const endpoint = status ? 
       `${ALPACA_API_URL}/orders?status=${status}` : 

@@ -97,8 +97,9 @@ export class AlpacaService {
    */
   static async getOrders(status?: string): Promise<AlpacaOrder[]> {
     try {
+      // Fix: Pass status as a parameter in the body instead of using query
       const { data, error } = await supabase.functions.invoke('alpaca/orders', {
-        query: status ? { status } : undefined
+        body: status ? { status } : undefined
       });
       
       if (error) {
