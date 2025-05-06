@@ -102,3 +102,52 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ReactFlow custom styling */
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.react-flow__handle-top {
+  top: -4px;
+}
+
+.react-flow__handle-bottom {
+  bottom: -4px;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+.dark .react-flow__edge-path {
+  stroke: #6b7280;
+}
+
+.dark .react-flow__background {
+  background-color: #1E1E1E;
+}
+
+.dark .react-flow__minimap {
+  background-color: #2C2C2C;
+}
+
+.dark .react-flow__controls {
+  background-color: #2C2C2C;
+  border-color: #3A3A3A;
+}
+
+.dark .react-flow__controls-button {
+  background-color: #2C2C2C;
+  border-color: #3A3A3A;
+  color: #E5E7EB;
+  fill: #E5E7EB;
+}
+
+.dark .react-flow__panel button {
+  background-color: #2C2C2C;
+  color: white;
+  border-color: #3A3A3A;
+}
