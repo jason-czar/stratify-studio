@@ -13,10 +13,12 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { nodeTypes } from '../components/nodes/nodeTypes';
 import NodeConfigPanel from '../components/panels/NodeConfigPanel';
+import BacktestPanel from '../components/panels/BacktestPanel';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { NodeData, StartNodeData } from '@/types/nodes';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -143,12 +145,25 @@ const Index = () => {
           </div>
           
           <div>
-            <NodeConfigPanel 
-              nodeId={selectedNode?.id || null}
-              nodeType={selectedNode?.type || null}
-              data={selectedNode?.data || defaultEmptyData}
-              onUpdateNodeData={updateNodeData}
-            />
+            <Tabs defaultValue="config">
+              <TabsList className="grid grid-cols-2 mb-4">
+                <TabsTrigger value="config">Configure</TabsTrigger>
+                <TabsTrigger value="backtest">Backtest</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="config">
+                <NodeConfigPanel 
+                  nodeId={selectedNode?.id || null}
+                  nodeType={selectedNode?.type || null}
+                  data={selectedNode?.data || defaultEmptyData}
+                  onUpdateNodeData={updateNodeData}
+                />
+              </TabsContent>
+              
+              <TabsContent value="backtest">
+                <BacktestPanel nodes={nodes} edges={edges} />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
