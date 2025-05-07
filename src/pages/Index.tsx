@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import ReactFlow, { 
   Background, 
@@ -25,6 +24,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SaveAlgorithmDialog } from '@/components/SaveAlgorithmDialog';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { TradingAssistantChat } from '@/components/chat/TradingAssistantChat';
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -209,6 +209,14 @@ const Index = () => {
           </div>
         </div>
       </div>
+      
+      {/* Add the Trading Assistant Chat component */}
+      <TradingAssistantChat 
+        nodes={nodes}
+        edges={edges}
+        onUpdateNodes={setNodes}
+        onUpdateEdges={setEdges}
+      />
     </MainLayout>
   );
 };
