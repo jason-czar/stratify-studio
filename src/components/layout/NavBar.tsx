@@ -37,7 +37,7 @@ export function NavBar() {
         <Link to="/" className="mr-6 flex items-center space-x-2">
           <Binary className="h-6 w-6" />
           <span className="hidden font-bold sm:inline-block">
-            Algo Garden
+            Stratify
           </span>
         </Link>
         

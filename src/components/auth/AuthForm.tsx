@@ -49,7 +49,7 @@ export function AuthForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Alpaca Trading Algorithm</CardTitle>
+        <CardTitle className="text-2xl text-center">Stratify</CardTitle>
         <CardDescription className="text-center">Sign in or create an account to continue</CardDescription>
       </CardHeader>
       <Tabs defaultValue="signin" className="w-full">
