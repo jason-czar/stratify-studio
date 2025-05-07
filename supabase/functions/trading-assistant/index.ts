@@ -1,8 +1,33 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { Node, Edge } from 'reactflow';
-import { NodeData } from '../../src/types/nodes';
+
+// Define types directly in the file instead of importing from reactflow
+interface NodeData {
+  label?: string;
+  description?: string;
+  [key: string]: any;
+}
+
+interface Node {
+  id: string;
+  type?: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  data: NodeData;
+  [key: string]: any;
+}
+
+interface Edge {
+  id: string;
+  source: string;
+  target: string;
+  sourceHandle?: string | null;
+  targetHandle?: string | null;
+  [key: string]: any;
+}
 
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
 
@@ -42,7 +67,7 @@ serve(async (req) => {
     const { prompt, nodes, edges, conversationHistory } = await req.json();
 
     // Process nodes and edges to create a context for the AI
-    const nodeTypes = new Set(nodes.map((node: Node<NodeData>) => node.type));
+    const nodeTypes = new Set(nodes.map((node: Node) => node.type));
     const nodeCount = nodes.length;
     const edgeCount = edges.length;
     
@@ -50,7 +75,7 @@ serve(async (req) => {
     let algorithmDescription = `Current algorithm has ${nodeCount} nodes (${Array.from(nodeTypes).join(', ')}) and ${edgeCount} connections.\n\n`;
     
     // Add details about each node
-    nodes.forEach((node: Node<NodeData>, index: number) => {
+    nodes.forEach((node: Node, index: number) => {
       algorithmDescription += `Node ${index + 1}: ${node.type} - ${JSON.stringify(node.data, null, 2)}\n`;
     });
 
@@ -72,7 +97,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',  // Using gpt-4o as it's the latest available model in the OpenAI API
+        model: 'gpt-4o',  // Using gpt-4o as the latest available model in the OpenAI API
         messages: messages,
         temperature: 0.7,
         max_tokens: 1000,

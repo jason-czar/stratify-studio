@@ -1,5 +1,6 @@
+
 import { supabase } from '@/integrations/supabase/client';
-import { Node, Edge } from 'reactflow';
+import type { Node, Edge } from 'reactflow';
 import { NodeData } from '@/types/nodes';
 import { toast } from '@/hooks/use-toast';
 
