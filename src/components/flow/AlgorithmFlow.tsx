@@ -35,16 +35,16 @@ export const AlgorithmFlow: React.FC<AlgorithmFlowProps> = ({
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(initialEdges);
   
   // Handle node changes and notify parent component
-  const handleNodesChange = useCallback((...args) => {
-    onNodesChangeInternal(...args);
+  const handleNodesChange = useCallback((changes) => {
+    onNodesChangeInternal(changes);
     if (onNodesChange) {
       onNodesChange(nodes);
     }
   }, [onNodesChangeInternal, onNodesChange, nodes]);
   
   // Handle edge changes and notify parent component
-  const handleEdgesChange = useCallback((...args) => {
-    onEdgesChangeInternal(...args);
+  const handleEdgesChange = useCallback((changes) => {
+    onEdgesChangeInternal(changes);
     if (onEdgesChange) {
       onEdgesChange(edges);
     }
