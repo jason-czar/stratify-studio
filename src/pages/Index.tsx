@@ -1,99 +1,31 @@
+
 import React, { useState, useCallback } from 'react';
-import ReactFlow, { 
-  Background, 
-  Controls, 
-  MiniMap, 
-  useNodesState, 
-  useEdgesState, 
-  addEdge,
-  Panel,
-  Node,
-  Edge
-} from 'reactflow';
+import { Node, Edge } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { nodeTypes } from '../components/nodes/nodeTypes';
-import NodeConfigPanel from '../components/panels/NodeConfigPanel';
-import BacktestPanel from '../components/panels/BacktestPanel';
-import { Button } from '@/components/ui/button';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { NodeData, StartNodeData } from '@/types/nodes';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AlpacaConnectionStatus from '@/components/AlpacaConnectionStatus';
+import { NodeData } from '@/types/nodes';
 import { useAuth } from '@/contexts/AuthContext';
-import { SaveAlgorithmDialog } from '@/components/SaveAlgorithmDialog';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { TradingAssistantChat } from '@/components/chat/TradingAssistantChat';
-import { supabase } from '@/integrations/supabase/client';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-const initialNodes: Node<NodeData>[] = [
-  {
-    id: 'start-1',
-    type: 'start',
-    data: { label: 'Start' } as StartNodeData,
-    position: { x: 250, y: 25 },
-  },
-  {
-    id: 'stock-1',
-    type: 'stockSelection',
-    data: { 
-      label: 'Select Stock',
-      ticker: 'AAPL',
-      marketType: 'stock',
-      exchange: 'NASDAQ' 
-    },
-    position: { x: 250, y: 125 },
-  },
-  {
-    id: 'condition-1',
-    type: 'condition',
-    data: { 
-      label: 'Set Conditions',
-      conditionType: 'price',
-      operator: '>',
-      value: 150
-    },
-    position: { x: 250, y: 250 },
-  },
-  {
-    id: 'order-1',
-    type: 'orderExecution',
-    data: { 
-      label: 'Execute Order',
-      orderType: 'market',
-      side: 'buy',
-      quantity: 10,
-      timeInForce: 'day'
-    },
-    position: { x: 250, y: 375 },
-  },
-];
-
-const initialEdges: Edge[] = [
-  { id: 'e-start-1-stock-1', source: 'start-1', target: 'stock-1', sourceHandle: 'out', targetHandle: 'in' },
-  { id: 'e-stock-1-condition-1', source: 'stock-1', target: 'condition-1', sourceHandle: 'out', targetHandle: 'in' },
-  { id: 'e-condition-1-order-1', source: 'condition-1', target: 'order-1', sourceHandle: 'outTrue', targetHandle: 'in' },
-];
+import { initialNodes, initialEdges } from '@/utils/initialFlowData';
+import { AlgorithmFlow } from '@/components/flow/AlgorithmFlow';
+import { AlgorithmControls } from '@/components/flow/AlgorithmControls';
+import { ConfigSidebar } from '@/components/flow/ConfigSidebar';
 
 const Index = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes] = useState<Node<NodeData>[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<NodeData> | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [alpacaStatusOpen, setAlpacaStatusOpen] = useState(false);
 
-  const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
+  // Handle node click to update the selected node
   const onNodeClick = useCallback((_, node) => {
     setSelectedNode(node);
   }, []);
 
+  // Update node data when configuration changes
   const updateNodeData = useCallback((nodeId, newData) => {
     setNodes((nds) =>
       nds.map((node) => {
@@ -109,23 +41,21 @@ const Index = () => {
         return node;
       })
     );
-  }, [setNodes]);
+  }, []);
 
+  // Handle save success by navigating to dashboard
   const handleSaveSuccess = () => {
     navigate('/dashboard');
   };
 
-  // Create a default empty data object that conforms to NodeData type
-  const defaultEmptyData: StartNodeData = { label: '' };
-
   // Handle updates from the Trading Assistant
   const handleUpdateNodes = useCallback((updatedNodes) => {
     setNodes(updatedNodes);
-  }, [setNodes]);
+  }, []);
 
   const handleUpdateEdges = useCallback((updatedEdges) => {
     setEdges(updatedEdges);
-  }, [setEdges]);
+  }, []);
 
   return (
     <MainLayout>
@@ -144,12 +74,12 @@ const Index = () => {
             <header className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
               <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline" 
+                <button 
+                  className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
                   onClick={() => navigate('/dashboard')}
                 >
                   Dashboard
-                </Button>
+                </button>
               </div>
             </header>
             
@@ -157,94 +87,30 @@ const Index = () => {
               <div className="lg:col-span-2">
                 <Card className="mb-6">
                   <CardContent className="p-0">
-                    <div style={{ height: '600px' }} className="rounded">
-                      <ReactFlow
-                        nodes={nodes}
-                        edges={edges}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        onConnect={onConnect}
-                        onNodeClick={onNodeClick}
-                        nodeTypes={nodeTypes}
-                        fitView
-                      >
-                        <Controls />
-                        <MiniMap zoomable pannable />
-                        <Background color="#aaa" gap={16} />
-                        
-                        <Panel position="top-left" className="m-2">
-                          <Button size="sm" variant="outline" className="bg-background">
-                            <Plus className="h-4 w-4 mr-1" /> Add Node
-                          </Button>
-                        </Panel>
-                      </ReactFlow>
-                    </div>
+                    <AlgorithmFlow
+                      initialNodes={nodes}
+                      initialEdges={edges}
+                      onNodeClick={onNodeClick}
+                      onNodesChange={handleUpdateNodes}
+                      onEdgesChange={handleUpdateEdges}
+                    />
                   </CardContent>
                 </Card>
                 
-                <div className="flex justify-center space-x-4">
-                  <SaveAlgorithmDialog 
-                    nodes={nodes}
-                    edges={edges}
-                    onSaveSuccess={handleSaveSuccess}
-                  />
-                  
-                  <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4"
-                    onClick={() => {
-                      // This would trigger deployment to Alpaca
-                      // For now, just navigate to dashboard
-                      navigate('/dashboard');
-                    }}
-                  >
-                    Deploy to Alpaca
-                  </Button>
-                </div>
+                <AlgorithmControls 
+                  nodes={nodes} 
+                  edges={edges}
+                  onSaveSuccess={handleSaveSuccess}
+                />
               </div>
               
               <div>
-                {/* Add Alpaca connection status card with collapsible functionality */}
-                <Collapsible
-                  open={alpacaStatusOpen}
-                  onOpenChange={setAlpacaStatusOpen}
-                  className="w-full border rounded-lg shadow-sm bg-card"
-                >
-                  <div className="flex items-center justify-between px-4 py-2 border-b">
-                    <h3 className="text-sm font-medium">Alpaca Connection Status</h3>
-                    <CollapsibleTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        {alpacaStatusOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                      </Button>
-                    </CollapsibleTrigger>
-                  </div>
-                  <CollapsibleContent>
-                    <div className="p-4">
-                      <AlpacaConnectionStatus />
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-                
-                <div className="mt-4">
-                  <Tabs defaultValue="config">
-                    <TabsList className="grid grid-cols-2 mb-4">
-                      <TabsTrigger value="config">Configure</TabsTrigger>
-                      <TabsTrigger value="backtest">Backtest</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="config">
-                      <NodeConfigPanel 
-                        nodeId={selectedNode?.id || null}
-                        nodeType={selectedNode?.type || null}
-                        data={selectedNode?.data || defaultEmptyData}
-                        onUpdateNodeData={updateNodeData}
-                      />
-                    </TabsContent>
-                    
-                    <TabsContent value="backtest">
-                      <BacktestPanel nodes={nodes} edges={edges} />
-                    </TabsContent>
-                  </Tabs>
-                </div>
+                <ConfigSidebar
+                  selectedNode={selectedNode}
+                  nodes={nodes}
+                  edges={edges}
+                  onUpdateNodeData={updateNodeData}
+                />
               </div>
             </div>
           </div>
