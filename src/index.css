@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,6 +103,11 @@
   }
 }
 
+/* Full height layout enhancements */
+html, body, #root {
+  height: 100%;
+}
+
 /* ReactFlow custom styling */
 .react-flow__handle {
   width: 8px;
@@ -119,6 +125,15 @@
 
 .react-flow__edge-path {
   stroke-width: 2;
+}
+
+/* Resizable panel styles */
+.react-resizable-handle {
+  background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%226%22 height%3D%2210%22%3E%3Cpath d%3D%22M0 0v10h2V0zm4 0v10h2V0z%22 fill%3D%22%23828282%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: center center;
+  z-index: 10;
+  cursor: col-resize;
 }
 
 .dark .react-flow__edge-path {
@@ -149,24 +164,4 @@
   background-color: #2C2C2C;
   color: white;
   border-color: #3A3A3A;
-}
-
-/* Resizable panel custom styling */
-.react-resizable-handle {
-  position: absolute;
-  right: -5px;
-  top: 0;
-  bottom: 0;
-  width: 10px;
-  cursor: col-resize;
-  background-color: transparent;
-  z-index: 50;
-}
-
-.react-resizable-handle:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.dark .react-resizable-handle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
 }

@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { NodeData } from '@/types/nodes';
-import { Bot, Send, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Bot, Send, User } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ResizablePanel, ResizablePanelGroup, ResizableHandle } from '@/components/ui/resizable';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -24,7 +23,6 @@ export function TradingAssistantChat({
   onUpdateNodes,
   onUpdateEdges
 }: TradingAssistantChatProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>(TradingAssistantService.getConversationHistory());
@@ -102,89 +100,79 @@ export function TradingAssistantChat({
   };
 
   return (
-    <ResizablePanelGroup direction="horizontal" className="fixed left-0 top-0 h-full z-40">
-      {/* Main chat panel */}
-      <ResizablePanel defaultSize={20} minSize={15} maxSize={40} className="bg-background border-r border-border">
-        <div className="h-full flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between p-3 border-b">
-            <div className="flex items-center space-x-2">
-              <Avatar className="h-8 w-8">
-                <Bot className="h-4 w-4 text-primary" />
-              </Avatar>
-              <div>
-                <h3 className="text-sm font-medium">Trading Assistant</h3>
-                <p className="text-xs text-muted-foreground">Powered by GPT</p>
-              </div>
-            </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={clearChat}
-              className="h-8 px-2 text-xs"
-            >
-              Clear Chat
-            </Button>
+    <div className="flex flex-col h-full bg-background border-r border-border">
+      {/* Header */}
+      <div className="flex items-center justify-between p-3 border-b">
+        <div className="flex items-center space-x-2">
+          <Avatar className="h-8 w-8">
+            <Bot className="h-4 w-4 text-primary" />
+          </Avatar>
+          <div>
+            <h3 className="text-sm font-medium">Trading Assistant</h3>
+            <p className="text-xs text-muted-foreground">Powered by GPT</p>
           </div>
-          
-          {/* Message area */}
-          <ScrollArea className="flex-1 p-4">
-            {messages.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-                <p>Ask me anything about building or modifying your trading algorithm.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {messages.map((msg, i) => (
-                  <div 
-                    key={i} 
-                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className={`max-w-[80%] ${msg.role === 'user' ? 'bg-primary/10 text-primary-foreground' : 'bg-muted'} rounded-lg p-3`}>
-                      <div className="flex items-center space-x-2 mb-1">
-                        {msg.role === 'assistant' ? (
-                          <Bot className="h-4 w-4" />
-                        ) : (
-                          <User className="h-4 w-4" />
-                        )}
-                        <span className="text-xs font-medium">
-                          {msg.role === 'assistant' ? 'Assistant' : 'You'}
-                        </span>
-                      </div>
-                      <div className="text-sm whitespace-pre-wrap">{msg.content}</div>
-                    </div>
-                  </div>
-                ))}
-                <div ref={messageEndRef} />
-              </div>
-            )}
-          </ScrollArea>
-          
-          {/* Input area */}
-          <form onSubmit={handleSendMessage} className="border-t p-3 flex items-center">
-            <Input
-              className="flex-1"
-              placeholder="Ask about your trading algorithm..."
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              disabled={isLoading}
-            />
-            <Button 
-              type="submit" 
-              size="icon" 
-              className="ml-2" 
-              disabled={isLoading || !message.trim()}
-            >
-              <Send size={16} />
-            </Button>
-          </form>
         </div>
-      </ResizablePanel>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={clearChat}
+          className="h-8 px-2 text-xs"
+        >
+          Clear Chat
+        </Button>
+      </div>
       
-      <ResizableHandle withHandle className="transition-colors hover:bg-muted" />
+      {/* Message area */}
+      <ScrollArea className="flex-1 p-4">
+        {messages.length === 0 ? (
+          <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+            <p>Ask me anything about building or modifying your trading algorithm.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {messages.map((msg, i) => (
+              <div 
+                key={i} 
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`max-w-[80%] ${msg.role === 'user' ? 'bg-primary/10 text-primary-foreground' : 'bg-muted'} rounded-lg p-3`}>
+                  <div className="flex items-center space-x-2 mb-1">
+                    {msg.role === 'assistant' ? (
+                      <Bot className="h-4 w-4" />
+                    ) : (
+                      <User className="h-4 w-4" />
+                    )}
+                    <span className="text-xs font-medium">
+                      {msg.role === 'assistant' ? 'Assistant' : 'You'}
+                    </span>
+                  </div>
+                  <div className="text-sm whitespace-pre-wrap">{msg.content}</div>
+                </div>
+              </div>
+            ))}
+            <div ref={messageEndRef} />
+          </div>
+        )}
+      </ScrollArea>
       
-      {/* This empty panel is necessary for the ResizablePanelGroup to work properly */}
-      <ResizablePanel defaultSize={80} className="hidden" />
-    </ResizablePanelGroup>
+      {/* Input area */}
+      <form onSubmit={handleSendMessage} className="border-t p-3 flex items-center">
+        <Input
+          className="flex-1"
+          placeholder="Ask about your trading algorithm..."
+          value={message}
+          onChange={e => setMessage(e.target.value)}
+          disabled={isLoading}
+        />
+        <Button 
+          type="submit" 
+          size="icon" 
+          className="ml-2" 
+          disabled={isLoading || !message.trim()}
+        >
+          <Send size={16} />
+        </Button>
+      </form>
+    </div>
   );
 }
