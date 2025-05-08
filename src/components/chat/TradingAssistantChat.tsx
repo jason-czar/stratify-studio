@@ -9,6 +9,7 @@ import { NodeData } from '@/types/nodes';
 import { Bot, Send, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface TradingAssistantChatProps {
   nodes: Node<NodeData>[];
