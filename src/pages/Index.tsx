@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import ReactFlow, { 
   Background, 
@@ -118,105 +119,108 @@ const Index = () => {
   return (
     <MainLayout>
       <div className="min-h-screen bg-background">
-        <div className="p-4">
-          <header className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/dashboard')}
-              >
-                Dashboard
-              </Button>
-            </div>
-          </header>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              <Card className="mb-6">
-                <CardContent className="p-0">
-                  <div style={{ height: '600px' }} className="rounded">
-                    <ReactFlow
-                      nodes={nodes}
-                      edges={edges}
-                      onNodesChange={onNodesChange}
-                      onEdgesChange={onEdgesChange}
-                      onConnect={onConnect}
-                      onNodeClick={onNodeClick}
-                      nodeTypes={nodeTypes}
-                      fitView
-                    >
-                      <Controls />
-                      <MiniMap zoomable pannable />
-                      <Background color="#aaa" gap={16} />
-                      
-                      <Panel position="top-left" className="m-2">
-                        <Button size="sm" variant="outline" className="bg-background">
-                          <Plus className="h-4 w-4 mr-1" /> Add Node
-                        </Button>
-                      </Panel>
-                    </ReactFlow>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <div className="flex justify-center space-x-4">
-                <SaveAlgorithmDialog 
-                  nodes={nodes}
-                  edges={edges}
-                  onSaveSuccess={handleSaveSuccess}
-                />
-                
+        {/* Trading Assistant Chat positioned on the left */}
+        <TradingAssistantChat 
+          nodes={nodes}
+          edges={edges}
+          onUpdateNodes={setNodes}
+          onUpdateEdges={setEdges}
+        />
+        
+        {/* Main content with left padding to accommodate the chat panel */}
+        <div className="pl-80 transition-all duration-300 ease-in-out">
+          <div className="p-4">
+            <header className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
+              <div className="flex items-center gap-4">
                 <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4"
-                  onClick={() => {
-                    // This would trigger deployment to Alpaca
-                    // For now, just navigate to dashboard
-                    navigate('/dashboard');
-                  }}
+                  variant="outline" 
+                  onClick={() => navigate('/dashboard')}
                 >
-                  Deploy to Alpaca
+                  Dashboard
                 </Button>
               </div>
-            </div>
+            </header>
             
-            <div>
-              {/* Add Alpaca connection status card */}
-              <AlpacaConnectionStatus />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2">
+                <Card className="mb-6">
+                  <CardContent className="p-0">
+                    <div style={{ height: '600px' }} className="rounded">
+                      <ReactFlow
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
+                        onNodeClick={onNodeClick}
+                        nodeTypes={nodeTypes}
+                        fitView
+                      >
+                        <Controls />
+                        <MiniMap zoomable pannable />
+                        <Background color="#aaa" gap={16} />
+                        
+                        <Panel position="top-left" className="m-2">
+                          <Button size="sm" variant="outline" className="bg-background">
+                            <Plus className="h-4 w-4 mr-1" /> Add Node
+                          </Button>
+                        </Panel>
+                      </ReactFlow>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <div className="flex justify-center space-x-4">
+                  <SaveAlgorithmDialog 
+                    nodes={nodes}
+                    edges={edges}
+                    onSaveSuccess={handleSaveSuccess}
+                  />
+                  
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4"
+                    onClick={() => {
+                      // This would trigger deployment to Alpaca
+                      // For now, just navigate to dashboard
+                      navigate('/dashboard');
+                    }}
+                  >
+                    Deploy to Alpaca
+                  </Button>
+                </div>
+              </div>
               
-              <div className="mt-4">
-                <Tabs defaultValue="config">
-                  <TabsList className="grid grid-cols-2 mb-4">
-                    <TabsTrigger value="config">Configure</TabsTrigger>
-                    <TabsTrigger value="backtest">Backtest</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="config">
-                    <NodeConfigPanel 
-                      nodeId={selectedNode?.id || null}
-                      nodeType={selectedNode?.type || null}
-                      data={selectedNode?.data || defaultEmptyData}
-                      onUpdateNodeData={updateNodeData}
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="backtest">
-                    <BacktestPanel nodes={nodes} edges={edges} />
-                  </TabsContent>
-                </Tabs>
+              <div>
+                {/* Add Alpaca connection status card */}
+                <AlpacaConnectionStatus />
+                
+                <div className="mt-4">
+                  <Tabs defaultValue="config">
+                    <TabsList className="grid grid-cols-2 mb-4">
+                      <TabsTrigger value="config">Configure</TabsTrigger>
+                      <TabsTrigger value="backtest">Backtest</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="config">
+                      <NodeConfigPanel 
+                        nodeId={selectedNode?.id || null}
+                        nodeType={selectedNode?.type || null}
+                        data={selectedNode?.data || defaultEmptyData}
+                        onUpdateNodeData={updateNodeData}
+                      />
+                    </TabsContent>
+                    
+                    <TabsContent value="backtest">
+                      <BacktestPanel nodes={nodes} edges={edges} />
+                    </TabsContent>
+                  </Tabs>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Add the Trading Assistant Chat component */}
-      <TradingAssistantChat 
-        nodes={nodes}
-        edges={edges}
-        onUpdateNodes={setNodes}
-        onUpdateEdges={setEdges}
-      />
     </MainLayout>
   );
 };
