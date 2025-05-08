@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import ReactFlow, { 
   Background, 
@@ -16,7 +15,7 @@ import { nodeTypes } from '../components/nodes/nodeTypes';
 import NodeConfigPanel from '../components/panels/NodeConfigPanel';
 import BacktestPanel from '../components/panels/BacktestPanel';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { NodeData, StartNodeData } from '@/types/nodes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { TradingAssistantChat } from '@/components/chat/TradingAssistantChat';
 import { supabase } from '@/integrations/supabase/client';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -83,6 +83,7 @@ const Index = () => {
   const [selectedNode, setSelectedNode] = useState<Node<NodeData> | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [alpacaStatusOpen, setAlpacaStatusOpen] = useState(false);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -202,8 +203,26 @@ const Index = () => {
               </div>
               
               <div>
-                {/* Add Alpaca connection status card */}
-                <AlpacaConnectionStatus />
+                {/* Add Alpaca connection status card with collapsible functionality */}
+                <Collapsible
+                  open={alpacaStatusOpen}
+                  onOpenChange={setAlpacaStatusOpen}
+                  className="w-full border rounded-lg shadow-sm bg-card"
+                >
+                  <div className="flex items-center justify-between px-4 py-2 border-b">
+                    <h3 className="text-sm font-medium">Alpaca Connection Status</h3>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        {alpacaStatusOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </Button>
+                    </CollapsibleTrigger>
+                  </div>
+                  <CollapsibleContent>
+                    <div className="p-4">
+                      <AlpacaConnectionStatus />
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
                 
                 <div className="mt-4">
                   <Tabs defaultValue="config">
