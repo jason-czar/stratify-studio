@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Node, Edge } from 'reactflow';
 import { TradingAssistantService, Message } from '@/services/tradingAssistantService';
@@ -7,6 +8,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { NodeData } from '@/types/nodes';
 import { Bot, Send, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from '@/hooks/use-toast';
 
 interface TradingAssistantChatProps {
   nodes: Node<NodeData>[];
@@ -57,6 +59,34 @@ export function TradingAssistantChat({
       
       // Update messages with assistant response
       setMessages(TradingAssistantService.getConversationHistory());
+      
+      // Handle node and edge updates from the edge function
+      const { data, error } = await supabase.functions.invoke('trading-assistant', {
+        body: {
+          prompt: message,
+          nodes,
+          edges,
+          conversationHistory: TradingAssistantService.getConversationHistory().slice(0, -1)
+        }
+      });
+      
+      if (error) {
+        console.error('Error getting updates from trading assistant:', error);
+      } else if (data) {
+        // Check if nodes or edges were modified
+        if (data.nodes && onUpdateNodes && JSON.stringify(data.nodes) !== JSON.stringify(nodes)) {
+          onUpdateNodes(data.nodes);
+          toast({
+            title: 'Algorithm Updated',
+            description: 'The trading algorithm has been modified based on your request.',
+            variant: 'default',
+          });
+        }
+        
+        if (data.edges && onUpdateEdges && JSON.stringify(data.edges) !== JSON.stringify(edges)) {
+          onUpdateEdges(data.edges);
+        }
+      }
       
     } catch (error) {
       console.error('Error sending message:', error);

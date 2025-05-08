@@ -49,6 +49,8 @@ export class TradingAssistantService {
       }
       
       const assistantResponse = data.response;
+      const updatedNodes = data.nodes;
+      const updatedEdges = data.edges;
       
       // Add assistant response to conversation history
       this.addMessage('assistant', assistantResponse);

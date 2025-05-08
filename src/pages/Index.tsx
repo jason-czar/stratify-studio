@@ -26,6 +26,7 @@ import { SaveAlgorithmDialog } from '@/components/SaveAlgorithmDialog';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { TradingAssistantChat } from '@/components/chat/TradingAssistantChat';
+import { supabase } from '@/integrations/supabase/client';
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -116,6 +117,15 @@ const Index = () => {
   // Create a default empty data object that conforms to NodeData type
   const defaultEmptyData: StartNodeData = { label: '' };
 
+  // Handle updates from the Trading Assistant
+  const handleUpdateNodes = useCallback((updatedNodes) => {
+    setNodes(updatedNodes);
+  }, [setNodes]);
+
+  const handleUpdateEdges = useCallback((updatedEdges) => {
+    setEdges(updatedEdges);
+  }, [setEdges]);
+
   return (
     <MainLayout>
       <div className="min-h-screen bg-background">
@@ -123,8 +133,8 @@ const Index = () => {
         <TradingAssistantChat 
           nodes={nodes}
           edges={edges}
-          onUpdateNodes={setNodes}
-          onUpdateEdges={setEdges}
+          onUpdateNodes={handleUpdateNodes}
+          onUpdateEdges={handleUpdateEdges}
         />
         
         {/* Main content with left padding to accommodate the chat panel */}
