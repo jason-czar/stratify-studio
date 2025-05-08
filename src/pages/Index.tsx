@@ -60,7 +60,7 @@ const Index = () => {
   return (
     <MainLayout>
       <div className="min-h-screen bg-background">
-        {/* Trading Assistant Chat positioned on the left */}
+        {/* Trading Assistant Chat with resizable panel */}
         <TradingAssistantChat 
           nodes={nodes}
           edges={edges}
@@ -68,8 +68,8 @@ const Index = () => {
           onUpdateEdges={handleUpdateEdges}
         />
         
-        {/* Main content with left padding to accommodate the chat panel */}
-        <div className="pl-80 transition-all duration-300 ease-in-out">
+        {/* Main content with margin-left to accommodate the chat panel */}
+        <div className="ml-[20%] transition-all duration-300 ease-in-out min-h-screen">
           <div className="p-4">
             <header className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
