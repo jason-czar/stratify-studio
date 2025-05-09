@@ -64,62 +64,38 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-background">
-        <ResizablePanelGroup direction="horizontal" className="min-h-screen">
-          {/* Trading Assistant Chat - Left Panel (resizable) */}
-          <ResizablePanel defaultSize={20} minSize={15} maxSize={40}>
-            <TradingAssistantChat 
-              nodes={nodes}
-              edges={edges}
-              onUpdateNodes={handleUpdateNodes}
-              onUpdateEdges={handleUpdateEdges}
-            />
-          </ResizablePanel>
-          
-          <ResizableHandle withHandle />
-          
-          {/* Main content - Right Panel */}
-          <ResizablePanel defaultSize={80}>
-            <div className="p-4">
-              <header className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
-                <div className="flex items-center gap-4">
-                  <button 
-                    className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    Dashboard
-                  </button>
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="p-4">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
+            <div className="flex items-center gap-4">
+              <button 
+                className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
+                onClick={() => navigate('/dashboard')}
+              >
+                Dashboard
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col">
+          {/* Top Section: Alpaca Connection Status and Config */}
+          <div className="bg-background p-4" style={{ height: '30%' }}>
+            <ResizablePanelGroup direction="horizontal" className="h-full">
+              {/* Left panel: Alpaca Connection Status */}
+              <ResizablePanel defaultSize={30} minSize={20}>
+                <div className="h-full overflow-auto p-2">
+                  <AlpacaConnectionStatus />
                 </div>
-              </header>
+              </ResizablePanel>
               
-              {/* Alpaca Connection Status positioned above the builder */}
-              <div className="mb-6">
-                <AlpacaConnectionStatus />
-              </div>
+              <ResizableHandle withHandle />
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-240px)]">
-                <div className="lg:col-span-2">
-                  <div className="h-full flex flex-col">
-                    <div className="flex-grow mb-4">
-                      <AlgorithmFlow
-                        initialNodes={nodes}
-                        initialEdges={edges}
-                        onNodeClick={onNodeClick}
-                        onNodesChange={handleUpdateNodes}
-                        onEdgesChange={handleUpdateEdges}
-                      />
-                    </div>
-                    
-                    <AlgorithmControls 
-                      nodes={nodes} 
-                      edges={edges}
-                      onSaveSuccess={handleSaveSuccess}
-                    />
-                  </div>
-                </div>
-                
-                <div className="h-full overflow-auto">
+              {/* Right panel: Node Configuration */}
+              <ResizablePanel defaultSize={70}>
+                <div className="h-full overflow-auto p-2">
                   <ConfigSidebar
                     selectedNode={selectedNode}
                     nodes={nodes}
@@ -127,10 +103,48 @@ const Index = () => {
                     onUpdateNodeData={updateNodeData}
                   />
                 </div>
-              </div>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
+          
+          {/* Bottom Section: Trading Assistant and Algorithm Flow */}
+          <div className="flex-1 bg-background p-4">
+            <ResizablePanelGroup direction="horizontal" className="h-full">
+              {/* Left panel: Trading Assistant */}
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={40}>
+                <TradingAssistantChat 
+                  nodes={nodes}
+                  edges={edges}
+                  onUpdateNodes={handleUpdateNodes}
+                  onUpdateEdges={handleUpdateEdges}
+                />
+              </ResizablePanel>
+              
+              <ResizableHandle withHandle />
+              
+              {/* Right panel: Algorithm Flow and Controls */}
+              <ResizablePanel defaultSize={80}>
+                <div className="h-full flex flex-col">
+                  <div className="flex-grow mb-4">
+                    <AlgorithmFlow
+                      initialNodes={nodes}
+                      initialEdges={edges}
+                      onNodeClick={onNodeClick}
+                      onNodesChange={handleUpdateNodes}
+                      onEdgesChange={handleUpdateEdges}
+                    />
+                  </div>
+                  
+                  <AlgorithmControls 
+                    nodes={nodes} 
+                    edges={edges}
+                    onSaveSuccess={handleSaveSuccess}
+                  />
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
+        </div>
       </div>
     </MainLayout>
   );

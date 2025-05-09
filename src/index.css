@@ -136,6 +136,14 @@ html, body, #root {
   cursor: col-resize;
 }
 
+/* Additional layout styles */
+.resizable-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ReactFlow dark mode styles */
 .dark .react-flow__edge-path {
   stroke: #6b7280;
 }
