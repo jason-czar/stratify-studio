@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+
+import React, { useState, useCallback, useEffect } from 'react';
 import { Node, Edge } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import { initialNodes, initialEdges } from '@/utils/initialFlowData';
 import { AlgorithmFlow } from '@/components/flow/AlgorithmFlow';
 import { AlgorithmControls } from '@/components/flow/AlgorithmControls';
 import { ConfigSidebar } from '@/components/flow/ConfigSidebar';
+
 const Index = () => {
   const [nodes, setNodes] = useState<Node<NodeData>[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
@@ -47,12 +49,35 @@ const Index = () => {
   };
 
   // Handle updates from the Trading Assistant
-  const handleUpdateNodes = useCallback(updatedNodes => {
+  const handleUpdateNodes = useCallback((updatedNodes) => {
     setNodes(updatedNodes);
   }, []);
-  const handleUpdateEdges = useCallback(updatedEdges => {
+  
+  const handleUpdateEdges = useCallback((updatedEdges) => {
     setEdges(updatedEdges);
   }, []);
+
+  // Listen for custom events from the TradingAssistantService
+  useEffect(() => {
+    const handleNodeUpdate = (event) => {
+      console.log('Received node update from trading assistant', event.detail.nodes);
+      setNodes(event.detail.nodes);
+    };
+    
+    const handleEdgeUpdate = (event) => {
+      console.log('Received edge update from trading assistant', event.detail.edges);
+      setEdges(event.detail.edges);
+    };
+    
+    window.addEventListener('trading-assistant-update-nodes', handleNodeUpdate);
+    window.addEventListener('trading-assistant-update-edges', handleEdgeUpdate);
+    
+    return () => {
+      window.removeEventListener('trading-assistant-update-nodes', handleNodeUpdate);
+      window.removeEventListener('trading-assistant-update-edges', handleEdgeUpdate);
+    };
+  }, []);
+  
   return <MainLayout>
       <div className="min-h-screen bg-background">
         {/* Trading Assistant Chat positioned on the left */}
@@ -83,4 +108,5 @@ const Index = () => {
       </div>
     </MainLayout>;
 };
+
 export default Index;

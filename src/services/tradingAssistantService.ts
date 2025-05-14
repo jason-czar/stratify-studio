@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { Node, Edge } from 'reactflow';
 import { NodeData } from '@/types/nodes';
@@ -49,11 +48,33 @@ export class TradingAssistantService {
       }
       
       const assistantResponse = data.response;
-      const updatedNodes = data.nodes;
-      const updatedEdges = data.edges;
       
       // Add assistant response to conversation history
       this.addMessage('assistant', assistantResponse);
+      
+      // Process any node or edge updates
+      if (data.modified) {
+        console.log('Algorithm was modified by the assistant');
+        
+        if (data.nodes && JSON.stringify(data.nodes) !== JSON.stringify(nodes)) {
+          // Update the nodes in the application
+          window.dispatchEvent(new CustomEvent('trading-assistant-update-nodes', { 
+            detail: { nodes: data.nodes }
+          }));
+          
+          toast({
+            title: 'Algorithm Updated',
+            description: 'The trading algorithm has been modified based on your request.',
+          });
+        }
+        
+        if (data.edges && JSON.stringify(data.edges) !== JSON.stringify(edges)) {
+          // Update the edges in the application
+          window.dispatchEvent(new CustomEvent('trading-assistant-update-edges', {
+            detail: { edges: data.edges }
+          }));
+        }
+      }
       
       return assistantResponse;
     } catch (error) {

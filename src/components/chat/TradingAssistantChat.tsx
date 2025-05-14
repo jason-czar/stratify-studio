@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Node, Edge } from 'reactflow';
 import { TradingAssistantService, Message } from '@/services/tradingAssistantService';
@@ -9,7 +8,6 @@ import { NodeData } from '@/types/nodes';
 import { Bot, Send, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 interface TradingAssistantChatProps {
   nodes: Node<NodeData>[];
@@ -55,42 +53,21 @@ export function TradingAssistantChat({
       // Clear the input field
       setMessage('');
       
-      // Get response from assistant
+      // Get response from assistant and any node/edge updates
       const response = await TradingAssistantService.getAssistantResponse(message, nodes, edges);
       
       // Update messages with assistant response
       setMessages(TradingAssistantService.getConversationHistory());
       
-      // Handle node and edge updates from the edge function
-      const { data, error } = await supabase.functions.invoke('trading-assistant', {
-        body: {
-          prompt: message,
-          nodes,
-          edges,
-          conversationHistory: TradingAssistantService.getConversationHistory().slice(0, -1)
-        }
-      });
-      
-      if (error) {
-        console.error('Error getting updates from trading assistant:', error);
-      } else if (data) {
-        // Check if nodes or edges were modified
-        if (data.nodes && onUpdateNodes && JSON.stringify(data.nodes) !== JSON.stringify(nodes)) {
-          onUpdateNodes(data.nodes);
-          toast({
-            title: 'Algorithm Updated',
-            description: 'The trading algorithm has been modified based on your request.',
-            variant: 'default',
-          });
-        }
-        
-        if (data.edges && onUpdateEdges && JSON.stringify(data.edges) !== JSON.stringify(edges)) {
-          onUpdateEdges(data.edges);
-        }
-      }
+      // The edge function response is now handled inside the service
       
     } catch (error) {
       console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process your request. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
