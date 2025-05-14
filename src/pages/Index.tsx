@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { Node, Edge } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -12,12 +11,13 @@ import { initialNodes, initialEdges } from '@/utils/initialFlowData';
 import { AlgorithmFlow } from '@/components/flow/AlgorithmFlow';
 import { AlgorithmControls } from '@/components/flow/AlgorithmControls';
 import { ConfigSidebar } from '@/components/flow/ConfigSidebar';
-
 const Index = () => {
   const [nodes, setNodes] = useState<Node<NodeData>[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [selectedNode, setSelectedNode] = useState<Node<NodeData> | null>(null);
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
 
   // Handle node click to update the selected node
@@ -27,20 +27,18 @@ const Index = () => {
 
   // Update node data when configuration changes
   const updateNodeData = useCallback((nodeId, newData) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id === nodeId) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              ...newData,
-            },
-          };
-        }
-        return node;
-      })
-    );
+    setNodes(nds => nds.map(node => {
+      if (node.id === nodeId) {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            ...newData
+          }
+        };
+      }
+      return node;
+    }));
   }, []);
 
   // Handle save success by navigating to dashboard
@@ -49,75 +47,40 @@ const Index = () => {
   };
 
   // Handle updates from the Trading Assistant
-  const handleUpdateNodes = useCallback((updatedNodes) => {
+  const handleUpdateNodes = useCallback(updatedNodes => {
     setNodes(updatedNodes);
   }, []);
-
-  const handleUpdateEdges = useCallback((updatedEdges) => {
+  const handleUpdateEdges = useCallback(updatedEdges => {
     setEdges(updatedEdges);
   }, []);
-
-  return (
-    <MainLayout>
+  return <MainLayout>
       <div className="min-h-screen bg-background">
         {/* Trading Assistant Chat positioned on the left */}
-        <TradingAssistantChat 
-          nodes={nodes}
-          edges={edges}
-          onUpdateNodes={handleUpdateNodes}
-          onUpdateEdges={handleUpdateEdges}
-        />
+        <TradingAssistantChat nodes={nodes} edges={edges} onUpdateNodes={handleUpdateNodes} onUpdateEdges={handleUpdateEdges} />
         
         {/* Main content with left padding to accommodate the chat panel */}
         <div className="pl-80 transition-all duration-300 ease-in-out">
           <div className="p-4">
-            <header className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">Stratify Algorithm Builder</h1>
-              <div className="flex items-center gap-4">
-                <button 
-                  className="px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50"
-                  onClick={() => navigate('/dashboard')}
-                >
-                  Dashboard
-                </button>
-              </div>
-            </header>
+            
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-2">
                 <Card className="mb-6">
                   <CardContent className="p-0">
-                    <AlgorithmFlow
-                      initialNodes={nodes}
-                      initialEdges={edges}
-                      onNodeClick={onNodeClick}
-                      onNodesChange={handleUpdateNodes}
-                      onEdgesChange={handleUpdateEdges}
-                    />
+                    <AlgorithmFlow initialNodes={nodes} initialEdges={edges} onNodeClick={onNodeClick} onNodesChange={handleUpdateNodes} onEdgesChange={handleUpdateEdges} />
                   </CardContent>
                 </Card>
                 
-                <AlgorithmControls 
-                  nodes={nodes} 
-                  edges={edges}
-                  onSaveSuccess={handleSaveSuccess}
-                />
+                <AlgorithmControls nodes={nodes} edges={edges} onSaveSuccess={handleSaveSuccess} />
               </div>
               
               <div>
-                <ConfigSidebar
-                  selectedNode={selectedNode}
-                  nodes={nodes}
-                  edges={edges}
-                  onUpdateNodeData={updateNodeData}
-                />
+                <ConfigSidebar selectedNode={selectedNode} nodes={nodes} edges={edges} onUpdateNodeData={updateNodeData} />
               </div>
             </div>
           </div>
         </div>
       </div>
-    </MainLayout>
-  );
+    </MainLayout>;
 };
-
 export default Index;
