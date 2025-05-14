@@ -62,7 +62,7 @@ export const AlgorithmFlow: React.FC<AlgorithmFlowProps> = ({
   );
 
   return (
-    <div className="h-full w-full rounded">
+    <div style={{ height: '600px' }} className="rounded">
       <ReactFlow
         nodes={nodes}
         edges={edges}

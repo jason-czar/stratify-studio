@@ -103,11 +103,6 @@
   }
 }
 
-/* Full height layout enhancements */
-html, body, #root {
-  height: 100%;
-}
-
 /* ReactFlow custom styling */
 .react-flow__handle {
   width: 8px;
@@ -127,23 +122,6 @@ html, body, #root {
   stroke-width: 2;
 }
 
-/* Resizable panel styles */
-.react-resizable-handle {
-  background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%226%22 height%3D%2210%22%3E%3Cpath d%3D%22M0 0v10h2V0zm4 0v10h2V0z%22 fill%3D%22%23828282%22/%3E%3C/svg%3E');
-  background-repeat: no-repeat;
-  background-position: center center;
-  z-index: 10;
-  cursor: col-resize;
-}
-
-/* Additional layout styles */
-.resizable-panel-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* ReactFlow dark mode styles */
 .dark .react-flow__edge-path {
   stroke: #6b7280;
 }
