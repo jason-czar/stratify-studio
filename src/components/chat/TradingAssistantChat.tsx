@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Node, Edge } from 'reactflow';
 import { TradingAssistantService, Message } from '@/services/tradingAssistantService';
@@ -43,6 +44,10 @@ export function TradingAssistantChat({
     
     if (!message.trim() || isLoading) return;
     
+    console.log('TradingAssistantChat - Sending message:', message);
+    console.log('TradingAssistantChat - Current nodes count:', nodes.length);
+    console.log('TradingAssistantChat - Current edges count:', edges.length);
+    
     setIsLoading(true);
     
     try {
@@ -53,16 +58,20 @@ export function TradingAssistantChat({
       // Clear the input field
       setMessage('');
       
+      console.log('TradingAssistantChat - Calling getAssistantResponse');
       // Get response from assistant and any node/edge updates
       const response = await TradingAssistantService.getAssistantResponse(message, nodes, edges);
+      console.log('TradingAssistantChat - Got response:', response.substring(0, 100) + '...');
       
       // Update messages with assistant response
       setMessages(TradingAssistantService.getConversationHistory());
       
-      // The edge function response is now handled inside the service
+      // Log nodes and edges to see if they've changed
+      console.log('TradingAssistantChat - Nodes after response:', nodes.length);
+      console.log('TradingAssistantChat - Edges after response:', edges.length);
       
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('TradingAssistantChat - Error sending message:', error);
       toast({
         title: "Error",
         description: "Failed to process your request. Please try again.",
@@ -76,6 +85,7 @@ export function TradingAssistantChat({
   const clearChat = () => {
     TradingAssistantService.clearConversationHistory();
     setMessages([]);
+    console.log('TradingAssistantChat - Conversation history cleared');
   };
 
   return (

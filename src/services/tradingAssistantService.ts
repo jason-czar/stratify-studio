@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { Node, Edge } from 'reactflow';
 import { NodeData } from '@/types/nodes';
@@ -17,6 +18,10 @@ export class TradingAssistantService {
     edges: Edge[]
   ): Promise<string> {
     try {
+      console.log('Trading Assistant - Request:', { prompt });
+      console.log('Trading Assistant - Current Nodes:', JSON.stringify(nodes));
+      console.log('Trading Assistant - Current Edges:', JSON.stringify(edges));
+      
       // Add user message to conversation history
       this.addMessage('user', prompt);
       
@@ -27,6 +32,8 @@ export class TradingAssistantService {
           content: msg.content
         }))
         .slice(0, -1); // Exclude the last message as we'll send it with context
+      
+      console.log('Trading Assistant - Calling edge function with conversation history length:', apiConversationHistory.length);
       
       const { data, error } = await supabase.functions.invoke('trading-assistant', {
         body: {
@@ -47,6 +54,8 @@ export class TradingAssistantService {
         return 'Sorry, I encountered an error processing your request.';
       }
       
+      console.log('Trading Assistant - Response from edge function:', data);
+      
       const assistantResponse = data.response;
       
       // Add assistant response to conversation history
@@ -55,8 +64,14 @@ export class TradingAssistantService {
       // Process any node or edge updates
       if (data.modified) {
         console.log('Algorithm was modified by the assistant');
+        console.log('Modified data:', JSON.stringify(data));
         
         if (data.nodes && JSON.stringify(data.nodes) !== JSON.stringify(nodes)) {
+          console.log('New nodes different from current nodes, dispatching update event');
+          console.log('Original node count:', nodes.length);
+          console.log('New node count:', data.nodes.length);
+          console.log('Nodes diff:', this.getDiff(nodes, data.nodes));
+          
           // Update the nodes in the application
           window.dispatchEvent(new CustomEvent('trading-assistant-update-nodes', { 
             detail: { nodes: data.nodes }
@@ -66,14 +81,25 @@ export class TradingAssistantService {
             title: 'Algorithm Updated',
             description: 'The trading algorithm has been modified based on your request.',
           });
+        } else {
+          console.log('Nodes unchanged or identical');
         }
         
         if (data.edges && JSON.stringify(data.edges) !== JSON.stringify(edges)) {
+          console.log('New edges different from current edges, dispatching update event');
+          console.log('Original edge count:', edges.length);
+          console.log('New edge count:', data.edges.length);
+          console.log('Edges diff:', this.getDiff(edges, data.edges));
+          
           // Update the edges in the application
           window.dispatchEvent(new CustomEvent('trading-assistant-update-edges', {
             detail: { edges: data.edges }
           }));
+        } else {
+          console.log('Edges unchanged or identical');
         }
+      } else {
+        console.log('No algorithm modifications from assistant');
       }
       
       return assistantResponse;
@@ -85,6 +111,32 @@ export class TradingAssistantService {
         variant: 'destructive',
       });
       return 'Sorry, an unexpected error occurred.';
+    }
+  }
+  
+  // Helper method to compare differences between objects
+  private static getDiff(original: any[], updated: any[]): string {
+    try {
+      const addedItems = updated.filter(updatedItem => 
+        !original.some(originalItem => originalItem.id === updatedItem.id)
+      );
+      
+      const removedItems = original.filter(originalItem => 
+        !updated.some(updatedItem => updatedItem.id === originalItem.id)
+      );
+      
+      const modifiedItems = updated.filter(updatedItem => {
+        const originalItem = original.find(item => item.id === updatedItem.id);
+        return originalItem && JSON.stringify(originalItem) !== JSON.stringify(updatedItem);
+      });
+      
+      return JSON.stringify({
+        added: addedItems.map(item => item.id),
+        removed: removedItems.map(item => item.id),
+        modified: modifiedItems.map(item => item.id)
+      });
+    } catch (error) {
+      return `Error calculating diff: ${error.message}`;
     }
   }
   

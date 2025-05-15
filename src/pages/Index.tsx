@@ -12,6 +12,7 @@ import { initialNodes, initialEdges } from '@/utils/initialFlowData';
 import { AlgorithmFlow } from '@/components/flow/AlgorithmFlow';
 import { AlgorithmControls } from '@/components/flow/AlgorithmControls';
 import { ConfigSidebar } from '@/components/flow/ConfigSidebar';
+import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [nodes, setNodes] = useState<Node<NodeData>[]>(initialNodes);
@@ -24,11 +25,13 @@ const Index = () => {
 
   // Handle node click to update the selected node
   const onNodeClick = useCallback((_, node) => {
+    console.log('Index - Node clicked:', node.id);
     setSelectedNode(node);
   }, []);
 
   // Update node data when configuration changes
   const updateNodeData = useCallback((nodeId, newData) => {
+    console.log('Index - Updating node data for node:', nodeId, newData);
     setNodes(nds => nds.map(node => {
       if (node.id === nodeId) {
         return {
@@ -45,34 +48,71 @@ const Index = () => {
 
   // Handle save success by navigating to dashboard
   const handleSaveSuccess = () => {
+    console.log('Index - Save successful, navigating to dashboard');
     navigate('/dashboard');
   };
 
   // Handle updates from the Trading Assistant
   const handleUpdateNodes = useCallback((updatedNodes) => {
-    setNodes(updatedNodes);
+    console.log('Index - handleUpdateNodes called with:', updatedNodes?.length || 'undefined');
+    if (updatedNodes) {
+      console.log('Index - Setting new nodes, count:', updatedNodes.length);
+      setNodes(updatedNodes);
+      toast({
+        title: 'Nodes Updated',
+        description: `Updated ${updatedNodes.length} nodes in the algorithm.`,
+      });
+    }
   }, []);
   
   const handleUpdateEdges = useCallback((updatedEdges) => {
-    setEdges(updatedEdges);
+    console.log('Index - handleUpdateEdges called with:', updatedEdges?.length || 'undefined');
+    if (updatedEdges) {
+      console.log('Index - Setting new edges, count:', updatedEdges.length);
+      setEdges(updatedEdges);
+      toast({
+        title: 'Edges Updated',
+        description: `Updated ${updatedEdges.length} edges in the algorithm.`,
+      });
+    }
   }, []);
 
   // Listen for custom events from the TradingAssistantService
   useEffect(() => {
     const handleNodeUpdate = (event) => {
-      console.log('Received node update from trading assistant', event.detail.nodes);
-      setNodes(event.detail.nodes);
+      console.log('Index - Received node update from trading assistant event', event.detail?.nodes?.length || 'No nodes in event');
+      if (event.detail && event.detail.nodes) {
+        console.log('Index - Setting nodes from event');
+        setNodes(event.detail.nodes);
+        toast({
+          title: 'Algorithm Updated',
+          description: 'The nodes in your trading algorithm have been updated.',
+        });
+      } else {
+        console.warn('Index - Received node update event without nodes data');
+      }
     };
     
     const handleEdgeUpdate = (event) => {
-      console.log('Received edge update from trading assistant', event.detail.edges);
-      setEdges(event.detail.edges);
+      console.log('Index - Received edge update from trading assistant event', event.detail?.edges?.length || 'No edges in event');
+      if (event.detail && event.detail.edges) {
+        console.log('Index - Setting edges from event');
+        setEdges(event.detail.edges);
+        toast({
+          title: 'Algorithm Updated',
+          description: 'The connections in your trading algorithm have been updated.',
+        });
+      } else {
+        console.warn('Index - Received edge update event without edges data');
+      }
     };
     
+    console.log('Index - Adding event listeners for trading assistant updates');
     window.addEventListener('trading-assistant-update-nodes', handleNodeUpdate);
     window.addEventListener('trading-assistant-update-edges', handleEdgeUpdate);
     
     return () => {
+      console.log('Index - Removing event listeners');
       window.removeEventListener('trading-assistant-update-nodes', handleNodeUpdate);
       window.removeEventListener('trading-assistant-update-edges', handleEdgeUpdate);
     };
